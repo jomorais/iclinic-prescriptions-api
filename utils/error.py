@@ -13,16 +13,20 @@ from dataclasses import dataclass
 10  http error
 """
 
-MALFORMED_REQUEST = 1
-PHYSICIAN_NOT_FOUND = 2
-PATIENT_NOT_FOUND = 3
-METRICS_SERVICE_NOT_AVAILABLE = 4
-PHYSICIANS_SERVICE_NOT_AVAILABLE = 5
-PATIENTS_SERVICE_NOT_AVAILABLE = 6
-CLINIC_NOT_FOUND = 7
-CLINICS_SERVICE_NOT_AVAILABLE = 8
-REQUEST_TIMEOUT = 9
-HTTP_ERROR = 10
+
+class ErrorCode:
+    MALFORMED_REQUEST = 1
+    PHYSICIAN_NOT_FOUND = 2
+    PATIENT_NOT_FOUND = 3
+    METRICS_SERVICE_NOT_AVAILABLE = 4
+    PHYSICIANS_SERVICE_NOT_AVAILABLE = 5
+    PATIENTS_SERVICE_NOT_AVAILABLE = 6
+    CLINIC_NOT_FOUND = 7
+    CLINICS_SERVICE_NOT_AVAILABLE = 8
+    REQUEST_TIMEOUT = 9
+    HTTP_ERROR = 10
+    INVALID_URL = 11
+    HTTP_STATUS = 12
 
 
 @dataclass
@@ -30,29 +34,36 @@ class Error:
     message: str = ''
     code: int = 0
 
-    def build_json(self):
+    def build_json(self, message='', code=0):
+        if message != '':
+            self.message = message
+        if code != 0:
+            self.code = code
         return {"error": {"message": self.message, "code": self.code}}
 
 
 @dataclass
 class Errors:
     MALFORMED_REQUEST: Error = Error(message="malformed request",
-                                     code=MALFORMED_REQUEST)
+                                     code=ErrorCode.MALFORMED_REQUEST)
     PHYSICIAN_NOT_FOUND: Error = Error(message="physician not found",
-                                       code=PHYSICIAN_NOT_FOUND)
+                                       code=ErrorCode.PHYSICIAN_NOT_FOUND)
     PATIENT_NOT_FOUND: Error = Error(message="patient not found",
-                                     code=PATIENT_NOT_FOUND)
+                                     code=ErrorCode.PATIENT_NOT_FOUND)
     METRICS_SERVICE_NOT_AVAILABLE: Error = Error(message="metrics service not available",
-                                                 code=METRICS_SERVICE_NOT_AVAILABLE)
+                                                 code=ErrorCode.METRICS_SERVICE_NOT_AVAILABLE)
     PHYSICIANS_SERVICE_NOT_AVAILABLE: Error = Error(message="physicians service not available",
-                                                    code=PHYSICIANS_SERVICE_NOT_AVAILABLE)
+                                                    code=ErrorCode.PHYSICIANS_SERVICE_NOT_AVAILABLE)
     PATIENTS_SERVICE_NOT_AVAILABLE: Error = Error(message="patients service not available",
-                                                  code=PATIENTS_SERVICE_NOT_AVAILABLE)
+                                                  code=ErrorCode.PATIENTS_SERVICE_NOT_AVAILABLE)
     CLINIC_NOT_FOUND: Error = Error(message="clinic not found",
-                                    code=CLINIC_NOT_FOUND)
+                                    code=ErrorCode.CLINIC_NOT_FOUND)
     CLINICS_SERVICE_NOT_AVAILABLE: Error = Error(message="clinics service not available",
-                                                 code=CLINICS_SERVICE_NOT_AVAILABLE)
+                                                 code=ErrorCode.CLINICS_SERVICE_NOT_AVAILABLE)
     REQUEST_TIMEOUT: Error = Error(message="request timeout",
-                                   code=REQUEST_TIMEOUT)
+                                   code=ErrorCode.REQUEST_TIMEOUT)
     HTTP_ERROR: Error = Error(message="http error",
-                              code=HTTP_ERROR)
+                              code=ErrorCode.HTTP_ERROR)
+    INVALID_URL: Error = Error(message="invalid url",
+                               code=ErrorCode.INVALID_URL)
+    HTTP_STATUS: Error = Error(message="http status")
