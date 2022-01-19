@@ -2,3 +2,6 @@ htmlcov/
 .idea/
 .pytest_cache/
 .coverage
+/test/Requester.sqlite
+/utils/Requester.sqlite
+/Requester.sqlite
