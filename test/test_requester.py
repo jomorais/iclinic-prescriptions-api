@@ -27,7 +27,7 @@ def test_requester_cached_session():
     assert type(requester.session) == requests_cache.CachedSession
 
 
-def test_requester_valid_url():
+def test_requester_get_valid_url():
     class MockedHttpSession:
         def get(self, url, timeout, headers):
 
@@ -53,7 +53,7 @@ def test_requester_valid_url():
     assert 'name' in resp
 
 
-def test_requester_timeout():
+def test_requester_get_timeout():
     class MockedHttpSession:
         def get(self, url, timeout, headers):
             raise requests.exceptions.Timeout
@@ -74,7 +74,7 @@ def test_requester_timeout():
     assert resp['error']['code'] == Errors.REQUEST_TIMEOUT.code
 
 
-def test_requester_http_error():
+def test_requester_get_http_error():
     class MockedHttpSession:
         def get(self, url, timeout, headers):
             raise requests.exceptions.HTTPError
@@ -112,7 +112,7 @@ def test_requester_invalid_url():
     assert resp['error']['code'] == Errors.INVALID_URL.code
 
 
-def test_requester_status_code():
+def test_requester_get_status_code():
     class MockedHttpSession:
         def get(self, url, timeout, headers):
             class Response:
