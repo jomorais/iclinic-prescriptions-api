@@ -1,5 +1,5 @@
 import pytest
-from utils.utils import mandatory_keys_checker
+from utils.tools import mandatory_keys_checker
 
 
 def test_key_checker():
