@@ -48,7 +48,10 @@ class Requester(object):
     def post(self, url, content):
         try:
             r = self.session.post(url=url, headers=self.default_header, timeout=self.timeout, json=content)
-            return r.json()
+            if r.status_code != 201:
+                return Errors.HTTP_STATUS.build_json(code=r.status_code)
+            if r.status_code == 201:
+                return r.json()
         except requests.exceptions.Timeout:
             return Errors.REQUEST_TIMEOUT.build_json()
         except requests.exceptions.HTTPError:
