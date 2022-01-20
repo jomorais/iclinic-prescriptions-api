@@ -5,3 +5,4 @@ htmlcov/
 /test/Requester.sqlite
 /utils/Requester.sqlite
 /Requester.sqlite
+/test/Prescriptions.sqlite
