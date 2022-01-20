@@ -4,4 +4,3 @@ requests_cache==0.9.1
 coverage==5.5
 peewee==3.14.4
 pytest
-gunicorn

@@ -1,1 +1,1 @@
-web: gunicorn webserver:app
+web: python webserver.py
