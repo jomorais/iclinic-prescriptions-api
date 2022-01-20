@@ -45,7 +45,7 @@ def test_patientsservice_get_patient_not_found():
     assert response.code == Errors.PATIENT_NOT_FOUND.code
 
 
-def test_patientsservice_get_physician_service_not_available():
+def test_patientsservice_get_patient_service_not_available():
     def setup():
         class MockedRequester:
             def get(self, url):
