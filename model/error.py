@@ -28,6 +28,7 @@ class ErrorCode:
     INVALID_URL = 11
     HTTP_STATUS = 12
     DATABASE_ERROR = 13
+    PRESCRIPTION_NOT_FOUND = 14
 
 
 @dataclass
@@ -69,3 +70,4 @@ class Errors:
                                code=ErrorCode.INVALID_URL)
     HTTP_STATUS: Error = Error(message="http status")
     DATABASE_ERROR: Error = Error(message="database error", code=ErrorCode.DATABASE_ERROR)
+    PRESCRIPTION_NOT_FOUND: Error = Error(message="prescription not found", code=ErrorCode.PRESCRIPTION_NOT_FOUND)
