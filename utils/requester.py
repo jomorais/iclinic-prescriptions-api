@@ -2,7 +2,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 from requests_cache import CachedSession
-from utils.error import Errors
+from model.error import Errors
 
 
 class Requester(object):
@@ -35,26 +35,26 @@ class Requester(object):
         try:
             r = self.session.get(url=url, headers=self.default_header, timeout=self.timeout)
             if r.status_code != 200:
-                return Errors.HTTP_STATUS.build_json(code=r.status_code)
+                return Errors.HTTP_STATUS.build_json(code=r.status_code), False
             if r.status_code == 200:
-                return r.json()
+                return r.json(), True
         except requests.exceptions.Timeout:
-            return Errors.REQUEST_TIMEOUT.build_json()
+            return Errors.REQUEST_TIMEOUT.build_json(), False
         except requests.exceptions.HTTPError:
-            return Errors.HTTP_ERROR.build_json()
+            return Errors.HTTP_ERROR.build_json(), False
         except requests.exceptions.InvalidURL:
-            return Errors.INVALID_URL.build_json()
+            return Errors.INVALID_URL.build_json(), False
 
     def post(self, url, content):
         try:
             r = self.session.post(url=url, headers=self.default_header, timeout=self.timeout, json=content)
             if r.status_code != 201:
-                return Errors.HTTP_STATUS.build_json(code=r.status_code)
+                return Errors.HTTP_STATUS.build_json(code=r.status_code), False
             if r.status_code == 201:
-                return r.json()
+                return r.json(), True
         except requests.exceptions.Timeout:
-            return Errors.REQUEST_TIMEOUT.build_json()
+            return Errors.REQUEST_TIMEOUT.build_json(), False
         except requests.exceptions.HTTPError:
-            return Errors.HTTP_ERROR.build_json()
+            return Errors.HTTP_ERROR.build_json(), False
 
 
