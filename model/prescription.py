@@ -12,7 +12,8 @@ class Prescription:
 
     def build_json(self):
         return {"data": {"id": self.id,
-                         "clinic_id": self.clinic_id,
-                         "physician_id": self.physician_id,
+                         "clinic": {"id": self.clinic_id},
+                         "physician": {"id": self.physician_id},
+                         "patient": {"id": self.patient_id},
                          "text": self.text,
-                         "metric_id": self.metric_id}}
+                         "metric": {"id": self.metric_id}}}

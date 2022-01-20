@@ -27,6 +27,7 @@ class ErrorCode:
     HTTP_ERROR = 10
     INVALID_URL = 11
     HTTP_STATUS = 12
+    DATABASE_ERROR = 13
 
 
 @dataclass
@@ -67,3 +68,4 @@ class Errors:
     INVALID_URL: Error = Error(message="invalid url",
                                code=ErrorCode.INVALID_URL)
     HTTP_STATUS: Error = Error(message="http status")
+    DATABASE_ERROR: Error = Error(message="database error", code=ErrorCode.DATABASE_ERROR)
