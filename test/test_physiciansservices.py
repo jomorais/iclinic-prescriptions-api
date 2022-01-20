@@ -58,3 +58,4 @@ def test_physiciansservice_get_physician_service_not_available():
     assert type(response) == Error
     assert response.message == Errors.PHYSICIANS_SERVICE_NOT_AVAILABLE.message
     assert response.code == Errors.PHYSICIANS_SERVICE_NOT_AVAILABLE.code
+

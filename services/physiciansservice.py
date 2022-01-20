@@ -18,3 +18,4 @@ class PhysiciansService(DependentService):
         if response["error"]["code"] == 503:
             return Errors.PHYSICIANS_SERVICE_NOT_AVAILABLE, False
 
+
