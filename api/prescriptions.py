@@ -9,7 +9,7 @@ from model.error import Errors
 from database.database import DatabaseStatus
 
 
-class Prescritions:
+class Prescriptions:
     def __init__(self, database):
         self.database = database
         self.clinics_service = ClinicsService(host="https://mock-api-challenge.dev.iclinic.com.br",
@@ -27,7 +27,7 @@ class Prescritions:
 
     def build_prescription(self, prescription_info):
         if mandatory_keys_checker(mandatory_keys=['clinic', 'physician', 'patient', 'text'],
-                                  dict_object=prescription_info):
+                                  dict_object=prescription_info) is False:
             return Errors.MALFORMED_REQUEST.build_json()
 
         prescription = Prescription()
@@ -36,21 +36,24 @@ class Prescritions:
         # collect Physician info from Physicians Service API
         physician, status = self.physicians_service.get_physician(id=prescription_info['physician']['id'])
         if not status:
-            return physician.build_json()
+            return physician.build_json(), 400
         prescription.physician_id = physician.id
         metric.physician_id = physician.id
         metric.physician_name = physician.name
         metric.physician_crm = physician.crm
+        print(physician)
 
         # collect Patient info from Patients Service API
         patient, status = self.patients_service.get_patient(id=prescription_info['patient']['id'])
         if not status:
-            return patient.build_json()
+            return patient.build_json(), 400
         prescription.patient_id = patient.id
         metric.patient_id = patient.id
         metric.patient_name = patient.name
         metric.patient_email = patient.email
         metric.patient_phone = patient.phone
+
+        print(patient)
 
         # collect Clinic info from Clinics Service API
         clinic, status = self.clinics_service.get_clinic(id=prescription_info['clinic']['id'])
@@ -58,35 +61,37 @@ class Prescritions:
             prescription.clinic_id = clinic.id
             metric.clinic_id = clinic.id
             metric.clinic_name = clinic.name
-
+            print(clinic)
+        prescription.text = prescription_info['text']
         # persist prescription and set metrics to Metrics Service API
         status, registered_prescription = self.database.register_prescription(prescription)
         if status == DatabaseStatus.REGISTER_PRESCRIPTION_ERROR:
-            return Errors.DATABASE_ERROR.build_json()
+            return Errors.DATABASE_ERROR.build_json(), 400
 
         metric.prescription_id = registered_prescription.id
+        print(metric.build_json())
         metrics, status = self.metrics_service.set_metrics(metrics=metric)
         if not status:
             # rollback
             status, removed_prescription = self.database.remove_prescription(registered_prescription.id)
             if status == DatabaseStatus.REMOVE_PRESCRIPTION_ERROR:
-                return Errors.DATABASE_ERROR.build_json()
-            return metrics.build_json()
+                return Errors.DATABASE_ERROR.build_json(), 400
+            return metrics.build_json(), 400
 
         # update metric_id in prescription
         registered_prescription.metric_id = metrics.id
         self.database.update_prescription(registered_prescription)
         if status == DatabaseStatus.UPDATE_PRESCRIPTION_SUCCESS:
-            return Errors.DATABASE_ERROR.build_json()
+            return Errors.DATABASE_ERROR.build_json(), 400
 
-        return registered_prescription.build_json()
+        return registered_prescription.build_json(), 201
 
     def select_prescription(self, prescription_id):
         prescription = Prescription(id=prescription_id)
         status, selected_prescription = self.database.select_prescription(prescription)
         if status == DatabaseStatus.SELECT_PRESCRIPTION_NOT_FOUND:
-            return Errors.PRESCRIPTION_NOT_FOUND.build_json()
+            return Errors.PRESCRIPTION_NOT_FOUND.build_json(), 400
         if status == DatabaseStatus.SELECT_PRESCRIPTION_ERROR:
-            return Errors.DATABASE_ERROR.build_json()
-        return selected_prescription.build_json()
+            return Errors.DATABASE_ERROR.build_json(), 400
+        return selected_prescription.build_json(), 200
 
