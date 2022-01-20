@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Prescription:
-    id: str = ''
+    id: int = 0
     clinic_id: int = 0
     physician_id: int = 0
     patient_id: int = 0
