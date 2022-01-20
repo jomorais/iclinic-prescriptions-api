@@ -2,7 +2,7 @@ import requests.exceptions
 import requests_cache
 
 from utils.requester import Requester
-from utils.error import Errors
+from model.error import Errors
 
 
 def test_requester_non_cached_session():
@@ -46,7 +46,7 @@ def test_requester_get_success():
                          cache_ttl=172800, session=MockedHttpSession())
     requester = setup()
 
-    resp = requester.get(url="https://mock-api-challenge.dev.iclinic.com.br/physicians/1/")
+    resp, status = requester.get(url="https://mock-api-challenge.dev.iclinic.com.br/physicians/1/")
     assert type(resp) == dict
     assert 'crm' in resp
     assert 'id' in resp
@@ -65,7 +65,7 @@ def test_requester_get_timeout():
                          cache_ttl=172800, session=MockedHttpSession())
     requester = setup()
 
-    resp = requester.get(url="https://mock-api-challenge.dev.iclinic.com.br/physicians/1/")
+    resp, status = requester.get(url="https://mock-api-challenge.dev.iclinic.com.br/physicians/1/")
     assert type(resp) == dict
     assert 'error' in resp
     assert 'message' in resp['error']
@@ -86,7 +86,7 @@ def test_requester_get_http_error():
                          cache_ttl=172800, session=MockedHttpSession())
     requester = setup()
 
-    resp = requester.get(url="https://mock-api-challenge.dev.iclinic.com.br/physicians/1/")
+    resp, status = requester.get(url="https://mock-api-challenge.dev.iclinic.com.br/physicians/1/")
     assert type(resp) == dict
     assert 'error' in resp
     assert 'message' in resp['error']
@@ -103,7 +103,7 @@ def test_requester_invalid_url():
                          cache_ttl=172800)
     requester = setup()
 
-    resp = requester.get(url="https://")
+    resp, status = requester.get(url="https://")
     assert type(resp) == dict
     assert 'error' in resp
     assert 'message' in resp['error']
@@ -127,7 +127,7 @@ def test_requester_get_status_code():
                          cache_ttl=172800, session=MockedHttpSession())
     requester = setup()
 
-    resp = requester.get(url="https://mock-api-challenge.dev.iclinic.com.br/physicians/1/")
+    resp, status = requester.get(url="https://mock-api-challenge.dev.iclinic.com.br/physicians/1/")
     assert type(resp) == dict
     assert 'error' in resp
     assert 'message' in resp['error']
@@ -148,7 +148,7 @@ def test_requester_post_timeout():
                          cache_ttl=172800, session=MockedHttpSession())
     requester = setup()
 
-    resp = requester.post(url="https://mock-api-challenge.dev.iclinic.com.br/physicians/1/", content={})
+    resp, status = requester.post(url="https://mock-api-challenge.dev.iclinic.com.br/physicians/1/", content={})
     assert type(resp) == dict
     assert 'error' in resp
     assert 'message' in resp['error']
@@ -169,7 +169,7 @@ def test_requester_post_http_error():
                          cache_ttl=172800, session=MockedHttpSession())
     requester = setup()
 
-    resp = requester.post(url="https://mock-api-challenge.dev.iclinic.com.br/physicians/1/", content={})
+    resp, status = requester.post(url="https://mock-api-challenge.dev.iclinic.com.br/physicians/1/", content={})
     assert type(resp) == dict
     assert 'error' in resp
     assert 'message' in resp['error']
@@ -193,7 +193,7 @@ def test_requester_post_status_code():
                          cache_ttl=172800, session=MockedHttpSession())
     requester = setup()
 
-    resp = requester.post(url="https://mock-api-challenge.dev.iclinic.com.br/physicians/1/", content={})
+    resp, status = requester.post(url="https://mock-api-challenge.dev.iclinic.com.br/physicians/1/", content={})
     assert type(resp) == dict
     assert 'error' in resp
     assert 'message' in resp['error']
@@ -232,7 +232,7 @@ def test_requester_post_success():
                          cache_ttl=172800, session=MockedHttpSession())
     requester = setup()
 
-    resp = requester.post(url="https://mock-api-challenge.dev.iclinic.com.br/physicians/1/", content={})
+    resp, status = requester.post(url="https://mock-api-challenge.dev.iclinic.com.br/physicians/1/", content={})
     assert type(resp) == dict
     assert 'id' in resp
     assert 'clinic_id' in resp
