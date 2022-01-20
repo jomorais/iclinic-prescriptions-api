@@ -58,23 +58,23 @@ class Prescritions:
             metric.clinic_id = clinic.id
             metric.clinic_name = clinic.name
 
-        prescription_id, status = self.database.save_prescription(prescription)
+        # persist prescription and set metrics to Metrics Service API
+        status, registered_prescription = self.database.register_prescription(prescription)
         if not status:
             return Errors.DATABASE_ERROR.build_json()
 
-        # persist prescription and set metrics to Metrics Service API
-        metric.prescription_id = prescription_id
+        metric.prescription_id = registered_prescription.id
         metrics, status = self.metrics_service.set_metrics(metrics=metric)
         if not status:
             # rollback
-            if self.database.delete_prescription(prescription_id) is False:
+            if self.database.remove_prescription(registered_prescription.id) is False:
                 return Errors.DATABASE_ERROR.build_json()
             return metrics.build_json()
 
         # update metric_id in prescription
-        prescription.metric_id = metric.id
-        self.database.update_prescription(prescription)
+        registered_prescription.metric_id = metric.id
+        self.database.update_prescription(registered_prescription)
         if not status:
             return Errors.DATABASE_ERROR.build_json()
 
-        return prescription.build_json()
+        return registered_prescription.build_json()
