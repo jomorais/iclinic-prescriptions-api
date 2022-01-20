@@ -23,9 +23,15 @@ def test_clinicservice_get_clinic_success():
 
 def test_clinicservice_get_clinic_not_found():
     def setup():
-        return ClinicsService(host="https://mock-api-challenge.dev.iclinic.com.br",
-                              path="/clinics/", retries=3, timeout=5, cache_ttl=259200,
-                              auth_token="Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJzZXJ2aWNlIjoiY2xpbmljcyJ9.r3w8KS4LfkKqZhOUK8YnIdLhVGJEqnReSClLCMBIJRQ")
+        class MockedRequester:
+            def get(self, url):
+                return Errors.HTTP_STATUS.build_json(code=404), False
+
+        cs = ClinicsService(host="https://mock-api-challenge.dev.iclinic.com.br",
+                            path="/clinics/", retries=3, timeout=5, cache_ttl=259200,
+                            auth_token="Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJzZXJ2aWNlIjoiY2xpbmljcyJ9.r3w8KS4LfkKqZhOUK8YnIdLhVGJEqnReSClLCMBIJRQ")
+        cs.requester = MockedRequester()
+        return cs
 
     cs = setup()
     response, status = cs.get_clinic(51)
