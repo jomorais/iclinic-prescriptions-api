@@ -19,5 +19,5 @@ def prescriptions():
     return api.build_prescription(request.json)
 
 
-# app.run(host='localhost', port=8001)
+app.run(port=8000)
 
