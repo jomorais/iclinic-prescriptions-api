@@ -16,9 +16,20 @@ class Metric:
     prescription_id: int = 0
 
     def build_json(self):
+        if self.clinic_id > 0:
+            return {"id": self.id,
+                    "clinic_id": self.clinic_id,
+                    "clinic_name": self.clinic_name,
+                    "physician_id": self.physician_id,
+                    "physician_name": self.physician_name,
+                    "physician_crm": self.physician_crm,
+                    "patient_id": self.patient_id,
+                    "patient_name": self.patient_name,
+                    "patient_email": self.patient_email,
+                    "patient_phone": self.patient_phone,
+                    "prescription_id": self.prescription_id,
+                    }
         return {"id": self.id,
-                "clinic_id": self.clinic_id,
-                "clinic_name": self.clinic_name,
                 "physician_id": self.physician_id,
                 "physician_name": self.physician_name,
                 "physician_crm": self.physician_crm,
