@@ -1,4 +1,4 @@
-from utils.error import Errors, Error
+from model.error import Errors, Error
 
 
 def test_error():
