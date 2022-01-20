@@ -6,6 +6,7 @@ from model.prescription import Prescription
 from model.metric import Metric
 from utils.tools import mandatory_keys_checker
 from model.error import Errors
+from database.database import DatabaseStatus
 
 
 class Prescritions:
@@ -60,21 +61,32 @@ class Prescritions:
 
         # persist prescription and set metrics to Metrics Service API
         status, registered_prescription = self.database.register_prescription(prescription)
-        if not status:
+        if status == DatabaseStatus.REGISTER_PRESCRIPTION_ERROR:
             return Errors.DATABASE_ERROR.build_json()
 
         metric.prescription_id = registered_prescription.id
         metrics, status = self.metrics_service.set_metrics(metrics=metric)
         if not status:
             # rollback
-            if self.database.remove_prescription(registered_prescription.id) is False:
+            status, removed_prescription = self.database.remove_prescription(registered_prescription.id)
+            if status == DatabaseStatus.REMOVE_PRESCRIPTION_ERROR:
                 return Errors.DATABASE_ERROR.build_json()
             return metrics.build_json()
 
         # update metric_id in prescription
-        registered_prescription.metric_id = metric.id
+        registered_prescription.metric_id = metrics.id
         self.database.update_prescription(registered_prescription)
-        if not status:
+        if status == DatabaseStatus.UPDATE_PRESCRIPTION_SUCCESS:
             return Errors.DATABASE_ERROR.build_json()
 
         return registered_prescription.build_json()
+
+    def select_prescription(self, prescription_id):
+        prescription = Prescription(id=prescription_id)
+        status, selected_prescription = self.database.select_prescription(prescription)
+        if status == DatabaseStatus.SELECT_PRESCRIPTION_NOT_FOUND:
+            return Errors.PRESCRIPTION_NOT_FOUND.build_json()
+        if status == DatabaseStatus.SELECT_PRESCRIPTION_ERROR:
+            return Errors.DATABASE_ERROR.build_json()
+        return selected_prescription.build_json()
+
