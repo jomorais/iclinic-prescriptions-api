@@ -3,16 +3,12 @@ version: "3.7"
 services:
   # data base image
   db:
-    image: mysql:5.7.34
-    command: --default-authentication-plugin=mysql_native_password
+    image: postgres:latest
     restart: always
     environment:
-      MYSQL_DATABASE: iclinic
-      MYSQL_ROOT_PASSWORD: iclinic
-    volumes:
-      - .dbdataa:/var/lib/mysql
-    ports:
-      - "3306:3306"
+      POSTGRES_DB: iclinic
+      POSTGRES_USER: iclinic
+      POSTGRES_PASSWORD: iclinic
 
   # iclinic prescription api
   iclinic:

@@ -1,6 +1,6 @@
 FROM python:3.9
 
-RUN apt update -y && apt upgrade -y
+RUN apt update -y
 
 RUN apt install git
 

@@ -1,12 +1,12 @@
-from peewee import SqliteDatabase, MySQLDatabase
+from peewee import SqliteDatabase, MySQLDatabase, PostgresqlDatabase
 
 DEFAULT_BTBASE_SETTINGS = {
   "database_name": "iclinic",
-  "connector": "mysql",
+  "connector": "postgresql",
   "host": "db",
-  "user": "root",
+  "user": "iclinic",
   "password": "iclinic",
-  "port": 3306
+  "port": 5432
 }
 
 
@@ -22,5 +22,13 @@ def mysql_connector():
                          port=DEFAULT_BTBASE_SETTINGS['port'])
 
 
+def postgresql_connector():
+    return PostgresqlDatabase(DEFAULT_BTBASE_SETTINGS['database_name'],
+                              user=DEFAULT_BTBASE_SETTINGS['user'],
+                              password=DEFAULT_BTBASE_SETTINGS['password'],
+                              host=DEFAULT_BTBASE_SETTINGS['host'],
+                              port=DEFAULT_BTBASE_SETTINGS['port'])
+
+
 def get_connector():
-    return mysql_connector()
+    return postgresql_connector()
