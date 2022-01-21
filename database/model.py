@@ -10,7 +10,7 @@ class BaseModel(Model):
 
 
 class Prescriptions_t(BaseModel):
-    id = IntegerField(unique=True, index=True, primary_key=True)
+    id = PrimaryKeyField()
     clinic_id = IntegerField(default=0)
     physician_id = IntegerField()
     patient_id = IntegerField()
