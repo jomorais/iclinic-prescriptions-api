@@ -86,12 +86,4 @@ class Prescriptions:
 
         return registered_prescription.build_json(), 201
 
-    def select_prescription(self, prescription_id):
-        prescription = Prescription(id=prescription_id)
-        status, selected_prescription = self.database.select_prescription(prescription)
-        if status == DatabaseStatus.SELECT_PRESCRIPTION_NOT_FOUND:
-            return Errors.PRESCRIPTION_NOT_FOUND.build_json(), 400
-        if status == DatabaseStatus.SELECT_PRESCRIPTION_ERROR:
-            return Errors.DATABASE_ERROR.build_json(), 400
-        return selected_prescription.build_json(), 200
 

@@ -12,6 +12,7 @@ def reset_database():
 
 class MockedPrescriptionModelBase:
     def __init__(self, physician_id, patient_id, text, clinic_id=0, metric_id=""):
+        self.id = 1
         self.physician_id = physician_id
         self.patient_id = patient_id
         self.clinic_id = clinic_id
@@ -29,12 +30,17 @@ class MockedPrescriptionModelBase:
 
 def test_database_register_prescription():
     def setup():
-        reset_database()
+        class MockedPrescription_t(MockedPrescriptionModelBase):
+            @staticmethod
+            def save():
+                return MockedPrescription_t
+
         p = Prescription(clinic_id=1,
                          physician_id=3,
                          patient_id=5,
                          text="Dipirona 1x ao dia")
-        db = IClinicDatabase()
+
+        db = IClinicDatabase(prescriptions_t=MockedPrescription_t)
         return db, p
 
     db, p = setup()
@@ -55,7 +61,6 @@ def test_database_register_error():
             def save():
                 raise DatabaseError()
 
-        reset_database()
         p = Prescription(clinic_id=1,
                          physician_id=3,
                          patient_id=5,
@@ -71,14 +76,27 @@ def test_database_register_error():
 
 def test_database_update_prescription():
     def setup():
-        reset_database()
+        class MockExecute:
+            def execute(self):
+                pass
+
+        class MockWhere:
+            def where(self, condition):
+                return MockExecute()
+
+        class MockedPrescription_t(MockedPrescriptionModelBase):
+            id = 1
+            @staticmethod
+            def update(clinic_id, physician_id, patient_id, text, metric_id):
+                return MockWhere()
+
         p = Prescription(clinic_id=1,
                          physician_id=3,
                          patient_id=5,
                          text="Dipirona 1x ao dia")
-        db = IClinicDatabase()
-        s, rp = db.register_prescription(prescription=p)
-        return db, rp
+        db = IClinicDatabase(prescriptions_t=MockedPrescription_t)
+        p.id = 1
+        return db, p
 
     db, registered_prescription = setup()
     registered_prescription.metric_id = uuid4()
@@ -108,7 +126,6 @@ def test_database_update_prescription_error():
             def update(clinic_id, physician_id, patient_id, text, metric_id):
                 return MockWhere()
 
-        reset_database()
         p = Prescription(id=1,
                          clinic_id=1,
                          physician_id=3,
@@ -126,14 +143,25 @@ def test_database_update_prescription_error():
 
 def test_database_remove_prescription():
     def setup():
-        reset_database()
+        class MockExecute:
+            def execute(self):
+                pass
+
+        class MockWhere:
+            def where(self, condition):
+                return MockExecute()
+
+        class MockedPrescription_t(MockedPrescriptionModelBase):
+            id = 1
+            @staticmethod
+            def delete():
+                return MockWhere()
         p = Prescription(clinic_id=1,
                          physician_id=3,
                          patient_id=5,
                          text="Dipirona 1x ao dia")
-        db = IClinicDatabase()
-        s, rp = db.register_prescription(prescription=p)
-        return db, rp
+        db = IClinicDatabase(prescriptions_t=MockedPrescription_t)
+        return db, p
 
     db, registered_prescription = setup()
     status, p = db.remove_prescription(prescription=registered_prescription)
@@ -156,7 +184,6 @@ def test_database_remove_prescription_error():
             def delete():
                 return MockWhere()
 
-        reset_database()
         p = Prescription(id=1,
                          clinic_id=1,
                          physician_id=3,
@@ -168,76 +195,6 @@ def test_database_remove_prescription_error():
     db, p = setup()
     status, p = db.remove_prescription(prescription=p)
     assert status == DatabaseStatus.REMOVE_PRESCRIPTION_ERROR
-
-
-def test_database_select_prescription():
-    def setup():
-        reset_database()
-        p = Prescription(clinic_id=1,
-                         physician_id=3,
-                         patient_id=5,
-                         text="Dipirona 1x ao dia")
-        db = IClinicDatabase()
-        s, rp = db.register_prescription(prescription=p)
-        return db, rp
-
-    db, registered_prescription = setup()
-    p = Prescription(id=1)
-    status, selected_prescription = db.select_prescription(prescription=p)
-    assert status == DatabaseStatus.SELECT_PRESCRIPTION_SUCCESS
-    assert selected_prescription.id == registered_prescription.id
-    assert selected_prescription.clinic_id == registered_prescription.clinic_id
-    assert selected_prescription.physician_id == registered_prescription.physician_id
-    assert selected_prescription.patient_id == registered_prescription.patient_id
-    assert selected_prescription.text == registered_prescription.text
-    assert selected_prescription.metric_id == registered_prescription.metric_id
-
-
-def test_database_select_prescription_not_found():
-    def setup():
-        reset_database()
-        p = Prescription(clinic_id=1,
-                         physician_id=3,
-                         patient_id=5,
-                         text="Dipirona 1x ao dia")
-        db = IClinicDatabase()
-        s, rp = db.register_prescription(prescription=p)
-        return db, rp
-
-    db, registered_prescription = setup()
-    p = Prescription(id=2)
-    status, selected_prescription = db.select_prescription(prescription=p)
-    assert status == DatabaseStatus.SELECT_PRESCRIPTION_NOT_FOUND
-
-
-def test_database_select_prescription_error():
-    def setup():
-        class MockExecute:
-            def iterator(self):
-                raise DatabaseError()
-
-        class MockWhere:
-            def where(self, condition):
-                return MockExecute()
-
-        class MockedPrescription_t(MockedPrescriptionModelBase):
-            id = 1
-            @staticmethod
-            def select():
-                return MockWhere()
-
-        reset_database()
-        p = Prescription(id=1,
-                         clinic_id=1,
-                         physician_id=3,
-                         patient_id=5,
-                         text="Dipirona 1x ao dia")
-        db = IClinicDatabase(prescriptions_t=MockedPrescription_t)
-        return db, p
-
-    db, p = setup()
-    status, p = db.select_prescription(prescription=p)
-    assert status == DatabaseStatus.SELECT_PRESCRIPTION_ERROR
 
 
 
