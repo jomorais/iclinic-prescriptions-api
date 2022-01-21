@@ -14,7 +14,7 @@ def home():
     return "Prescriptions REST API"
 
 
-@app.route('/prescriptions', methods=["POST"])
+@app.route('/prescriptions/', methods=["POST"])
 def prescriptions():
     return api.build_prescription(request.json)
 
