@@ -14,10 +14,11 @@ def home():
     return "Prescriptions REST API"
 
 
+@app.route('/prescriptions')
 @app.route('/prescriptions/', methods=["POST"])
 def prescriptions():
     return api.build_prescription(request.json)
 
 
-app.run(host="0.0.0.0")
+app.run(host="0.0.0.0", port=8008)
 
