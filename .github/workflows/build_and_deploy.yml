@@ -47,5 +47,5 @@ jobs:
             rm -rf iclinic-prescriptions-api/
             git clone git@github.com:jomorais/iclinic-prescriptions-api.git
             cd iclinic-prescriptions-api
-            docker-compose up --force-recreate
+            docker-compose up -d
     
