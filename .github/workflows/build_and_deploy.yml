@@ -29,3 +29,23 @@ jobs:
     - name: Test with pytest
       run: |
         python -m pytest test/*.py
+  
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Deployment
+        uses: appleboy/ssh-action@v0.1.2
+        with:
+          host: ${{secrets.SSH_HOST}}
+          key: ${{secrets.SSH_KEY}}
+          username: ${{secrets.SSH_USERNAME}}
+          
+          script: |
+            apt install docker docker-compose
+            rm -rf iclinic-prescriptions-api/
+            git clone git@github.com:jomorais/iclinic-prescriptions-api.git
+            cd iclinic-prescriptions-api
+            docker-compose up --force-recreate
+    
