@@ -5,44 +5,32 @@ from model.error import Errors, Error
 
 def test_metricsservice_set_metrics_success():
     def setup():
+        metrics = Metric(clinic_id=1,
+                         clinic_name="Clinica A",
+                         physician_id=1,
+                         physician_name="José",
+                         physician_crm="SP293893",
+                         patient_id=1,
+                         patient_name="Rodrigo",
+                         patient_email="rodrigo@gmail.com",
+                         patient_phone="(16)998765625",
+                         prescription_id=1)
+
         class MockedRequester:
             def post(self, url, content):
-                return {
-                        "id": "1",
-                        "clinic_id": 1,
-                        "clinic_name": "Clinica A",
-                        "physician_id": 1,
-                        "physician_name": "José",
-                        "physician_crm": "SP293893",
-                        "patient_id": 1,
-                        "patient_name": "Rodrigo",
-                        "patient_email": "rodrigo@gmail.com",
-                        "patient_phone": "(16)998765625",
-                        "prescription_id": 1
-                    }, True
+                return metrics.build_json(), True
 
         ms = MetricsService(host="https://mock-api-challenge.dev.iclinic.com.br",
                             path="/metrics/", retries=5, timeout=6, cache_ttl=0,
                             auth_token="Bearer SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c")
         ms.requester = MockedRequester()
-        return ms
+        return metrics, ms
 
-    ms = setup()
-    response, status = ms.set_metrics(metrics={
-                        "clinic_id": 1,
-                        "clinic_name": "Clinica A",
-                        "physician_id": 1,
-                        "physician_name": "José",
-                        "physician_crm": "SP293893",
-                        "patient_id": 1,
-                        "patient_name": "Rodrigo",
-                        "patient_email": "rodrigo@gmail.com",
-                        "patient_phone": "(16)998765625",
-                        "prescription_id": 1
-                    })
+    metrics, ms = setup()
+    response, status = ms.set_metrics(metrics=metrics)
     assert status
     assert type(response) == Metric
-    assert response.id == "1"
+    assert response.id == ""
     assert response.clinic_id == 1
     assert response.clinic_name == "Clinica A"
     assert response.physician_id == 1
@@ -57,6 +45,17 @@ def test_metricsservice_set_metrics_success():
 
 def test_metricsservice_set_metrics_malformed_request():
     def setup():
+        metrics = Metric(clinic_id=1,
+                         clinic_name="Clinica A",
+                         physician_id=1,
+                         physician_name="José",
+                         physician_crm="SP293893",
+                         patient_id=1,
+                         patient_name="Rodrigo",
+                         patient_email="rodrigo@gmail.com",
+                         patient_phone="(16)998765625",
+                         prescription_id=1)
+
         class MockedRequester:
             def post(self, url, content):
                 return Errors.HTTP_STATUS.build_json(code=400), False
@@ -65,10 +64,10 @@ def test_metricsservice_set_metrics_malformed_request():
                             path="/metrics/", retries=5, timeout=6, cache_ttl=0,
                             auth_token="Bearer SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c")
         ms.requester = MockedRequester()
-        return ms
+        return metrics, ms
 
-    cs = setup()
-    response, status = cs.set_metrics(metrics={})
+    metrics, ms = setup()
+    response, status = ms.set_metrics(metrics=metrics)
     assert not status
     assert type(response) == Error
     assert response.message == Errors.MALFORMED_REQUEST.message
@@ -77,6 +76,17 @@ def test_metricsservice_set_metrics_malformed_request():
 
 def test_metricsservice_set_metrics_service_not_available():
     def setup():
+        metrics = Metric(clinic_id=1,
+                         clinic_name="Clinica A",
+                         physician_id=1,
+                         physician_name="José",
+                         physician_crm="SP293893",
+                         patient_id=1,
+                         patient_name="Rodrigo",
+                         patient_email="rodrigo@gmail.com",
+                         patient_phone="(16)998765625",
+                         prescription_id=1)
+
         class MockedRequester:
             def post(self, url, content):
                 return Errors.HTTP_STATUS.build_json(code=503), False
@@ -85,9 +95,9 @@ def test_metricsservice_set_metrics_service_not_available():
                             path="/metrics/", retries=5, timeout=6, cache_ttl=0,
                             auth_token="Bearer SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c")
         ms.requester = MockedRequester()
-        return ms
-    ps = setup()
-    response, status = ps.set_metrics(metrics={})
+        return metrics, ms
+    metrics, ms = setup()
+    response, status = ms.set_metrics(metrics=metrics)
     assert not status
     assert type(response) == Error
     assert response.message == Errors.METRICS_SERVICE_NOT_AVAILABLE.message
