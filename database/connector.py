@@ -30,5 +30,10 @@ def postgresql_connector():
                               port=DEFAULT_BTBASE_SETTINGS['port'])
 
 
-def get_connector():
-    return postgresql_connector()
+def get_connector(connector="postgresql"):
+    if connector == "postgresql":
+        return postgresql_connector()
+    if connector == "mysql":
+        return mysql_connector()
+    if connector == "sqlite":
+        return sqlite_connector()
