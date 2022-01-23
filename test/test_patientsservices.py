@@ -1,6 +1,6 @@
 from services.patientsservice import PatientsService
 from model.patient import Patient
-from model.error import Errors, Error
+from model.error import Errors, Error, iClinicErrors
 
 
 def test_patientsservice_get_patient_success():
@@ -41,8 +41,8 @@ def test_patientsservice_get_patient_not_found():
     response, status = cs.get_patient(51)
     assert not status
     assert type(response) == Error
-    assert response.message == Errors.PATIENT_NOT_FOUND.message
-    assert response.code == Errors.PATIENT_NOT_FOUND.code
+    assert response.message == iClinicErrors.PATIENT_NOT_FOUND.message
+    assert response.code == iClinicErrors.PATIENT_NOT_FOUND.code
 
 
 def test_patientsservice_get_patient_service_not_available():
@@ -60,6 +60,6 @@ def test_patientsservice_get_patient_service_not_available():
     response, status = ps.get_patient(1)
     assert not status
     assert type(response) == Error
-    assert response.message == Errors.PATIENTS_SERVICE_NOT_AVAILABLE.message
-    assert response.code == Errors.PATIENTS_SERVICE_NOT_AVAILABLE.code
+    assert response.message == iClinicErrors.PATIENTS_SERVICE_NOT_AVAILABLE.message
+    assert response.code == iClinicErrors.PATIENTS_SERVICE_NOT_AVAILABLE.code
 
