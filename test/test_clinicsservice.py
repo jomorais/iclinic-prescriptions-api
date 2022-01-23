@@ -1,6 +1,6 @@
 from services.clinicsservice import ClinicsService
 from model.clinic import Clinic
-from model.error import Errors, Error
+from model.error import Errors, Error, iClinicErrors
 
 
 def test_clinicservice_get_clinic_success():
@@ -37,8 +37,8 @@ def test_clinicservice_get_clinic_not_found():
     response, status = cs.get_clinic(51)
     assert not status
     assert type(response) == Error
-    assert response.message == Errors.CLINIC_NOT_FOUND.message
-    assert response.code == Errors.CLINIC_NOT_FOUND.code
+    assert response.message == iClinicErrors.CLINIC_NOT_FOUND.message
+    assert response.code == iClinicErrors.CLINIC_NOT_FOUND.code
 
 
 def test_clinicservice_get_clinic_service_not_available():
@@ -56,5 +56,5 @@ def test_clinicservice_get_clinic_service_not_available():
     response, status = cs.get_clinic(1)
     assert not status
     assert type(response) == Error
-    assert response.message == Errors.CLINICS_SERVICE_NOT_AVAILABLE.message
-    assert response.code == Errors.CLINICS_SERVICE_NOT_AVAILABLE.code
+    assert response.message == iClinicErrors.CLINICS_SERVICE_NOT_AVAILABLE.message
+    assert response.code == iClinicErrors.CLINICS_SERVICE_NOT_AVAILABLE.code
