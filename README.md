@@ -198,3 +198,39 @@ Foram mapeados os seguintes erros:
 | 12   | invalid patients service response  |  
 | 13   | invalid physicians service response| 
 | 14   | invalid metrics service response   |
+
+## Depurando a aplicação
+
+Uma vez os containers em execução
+```shell
+sudo docker ps
+
+CONTAINER ID   IMAGE                               COMMAND                  CREATED        STATUS       PORTS                                       NAMES
+df8a5e7174f6   iclinic-prescriptions-api_iclinic   "python3 webserver.py"   4 hours ago    Up 4 hours   0.0.0.0:8008->8008/tcp, :::8008->8008/tcp   iclinic-prescriptions-api_iclinic_1
+3e9c2510a2ac   postgres:14.0                       "docker-entrypoint.s…"   19 hours ago   Up 4 hours   5432/tcp                                    iclinic-prescriptions-api_db_1
+```
+
+Para visualizar os logs da API execute o comando `docker logs`
+```shell
+sudo docker logs -f iclinic-prescriptions-api_iclinic_1
+```
+
+```shell
+
+INFO:Prescriptions.create_prescription(): creating a new prescription: {'clinic': {'id': 51}, 'physician': {'id': 50}, 'patient': {'id': 50}, 'text': 'Dipirona 1x ao diaasdasd'}
+INFO:Prescriptions.create_prescription(): accessing Dependent Services...
+INFO:Prescriptions.create_prescription(): Physician acquired from Physicians Service API: {'id': 50, 'name': 'Larissa Aragão', 'crm': '84218971'}
+INFO:Prescriptions.create_prescription(): Patient acquired from Patient Service API: {'id': 50, 'name': 'Lorenzo da Rosa', 'email': 'lucas-gabrielda-mota@costa.br', 'phone': '+55 61 9332 0585'}
+WARNING:Prescriptions.create_prescription(): Clinic not found: {'error': {'message': 'clinic not found', 'code': 7}}
+INFO:Prescriptions.create_prescription(): New Prescription: {'data': {'id': 0, 'clinic': {'id': 51}, 'physician': {'id': 50}, 'patient': {'id': 50}, 'text': 'Dipirona 1x ao diaasdasd', 'metric': {'id': ''}}}
+INFO:Prescriptions.create_prescription(): saving in database...
+INFO:Prescriptions.create_prescription(): SAVED! prescription.id: 295
+INFO:Prescriptions.create_prescription(): New Metric: {'id': '', 'physician_id': 50, 'physician_name': 'Larissa Aragão', 'physician_crm': '84218971', 'patient_id': 50, 'patient_name': 'Lorenzo da Rosa', 'patient_email': 'lucas-gabrielda-mota@costa.br', 'patient_phone': '+55 61 9332 0585', 'prescription_id': 295}
+INFO:Prescriptions.create_prescription(): integrating it in Metrics Service API...
+INFO:Prescriptions.create_prescription(): Metrics are integrated!! Metrics: {'id': '896496fa-eade-462c-8970-88cea894ec7d', 'physician_id': 50, 'physician_name': 'Larissa Aragão', 'physician_crm': '84218971', 'patient_id': 50, 'patient_name': 'Lorenzo da Rosa', 'patient_email': 'lucas-gabrielda-mota@costa.br', 'patient_phone': '+55 61 9332 0585', 'prescription_id': 295}
+INFO:Prescriptions.create_prescription(): applying Metrics.id into prescription...
+INFO:Prescriptions.create_prescription(): New Prescription are created successfully!!
+INFO:Prescriptions.create_prescription(): New Prescription: {'data': {'id': 295, 'clinic': {'id': 51}, 'physician': {'id': 50}, 'patient': {'id': 50}, 'text': 'Dipirona 1x ao diaasdasd', 'metric': {'id': '896496fa-eade-462c-8970-88cea894ec7d'}}}
+INFO:192.168.64.1 - - [23/Jan/2022 21:46:02] "POST /prescriptions HTTP/1.1" 201 -
+
+```
