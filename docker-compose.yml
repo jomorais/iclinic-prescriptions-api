@@ -16,8 +16,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      - "PYTHONUNBUFFERED=1"
     ports:
-      - "5000:5000"
+      - "8008:8008"
     volumes:
       - .:/app
     depends_on:
