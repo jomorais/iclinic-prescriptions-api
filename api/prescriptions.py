@@ -57,10 +57,10 @@ class Prescriptions:
         # collect Clinic info from Clinics Service API
         clinic, status = self.clinics_service.get_clinic(id=prescription_info['clinic']['id'])
         if status:
-            prescription.clinic_id = clinic.id
             metric.clinic_id = clinic.id
             metric.clinic_name = clinic.name
             print(clinic)
+        prescription.clinic_id = prescription_info['clinic']['id']
         prescription.text = prescription_info['text']
         # persist prescription and set metrics to Metrics Service API
         status, registered_prescription = self.database.register_prescription(prescription)
