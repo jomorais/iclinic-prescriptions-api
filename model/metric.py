@@ -18,6 +18,32 @@ class Metric:
     patient_phone: str = ''
     prescription_id: int = 0
 
+    schema = {
+        "id": "metric",
+        "type": "object",
+        "properties": {
+            "id": {"type": "string"},
+            "clinic_id": {"type": "number"},
+            "clinic_name": {"type": "string"},
+            "physician_id": {"type": "number"},
+            "physician_name": {"type": "string"},
+            "physician_crm": {"type": "string"},
+            "patient_id": {"type": "number"},
+            "patient_name": {"type": "string"},
+            "patient_email": {"type": "string"},
+            "patient_phone": {"type": "string"},
+            "prescription_id": {"type": "number"}
+        },
+        "required": ["id",
+                     "physician_id",
+                     "physician_name",
+                     "physician_crm",
+                     "patient_id",
+                     "patient_name",
+                     "patient_email",
+                     "patient_phone"]
+    }
+
     def set_clinic(self, clinic: Clinic):
         self.clinic_id = clinic.id
         self.clinic_name = clinic.name
