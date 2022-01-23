@@ -198,5 +198,3 @@ Foram mapeados os seguintes erros:
 | 12   | invalid patients service response  |  
 | 13   | invalid physicians service response| 
 | 14   | invalid metrics service response   |
-
-## Depurando a API
