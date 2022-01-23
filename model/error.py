@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 class ErrorCode:
     CODE_MALFORMED_REQUEST = 1
     CODE_PHYSICIAN_NOT_FOUND = 2
