@@ -52,14 +52,14 @@ class Prescriptions:
         logging.info("Prescriptions.create_prescription(): creating a new prescription: %s" % prescription_info)
         logging.info("Prescriptions.create_prescription(): accessing Dependent Services...")
         # collect Physician info from Physicians Service API
-        physician, status = self.physicians_service.get_physician(id=prescription_info['physician']['id'])
+        physician, status = self.physicians_service.get_physician(physician_id=prescription_info['physician']['id'])
         if not status:
             logging.error("Prescriptions.create_prescription(): physicians_service.get_physician(): %s" % physician.build_json())
             return HttpResponse(json=physician.build_json(), code=physician.http_code)
         logging.info("Prescriptions.create_prescription(): Physician acquired from Physicians Service API: %s" % physician.build_json())
 
         # collect Patient info from Patients Service API
-        patient, status = self.patients_service.get_patient(id=prescription_info['patient']['id'])
+        patient, status = self.patients_service.get_patient(patient_id=prescription_info['patient']['id'])
         if not status:
             logging.error("Prescriptions.create_prescription(): patients_service.get_patient(): %s" % patient.build_json())
             return HttpResponse(json=patient.build_json(), code=patient.http_code)
@@ -67,7 +67,7 @@ class Prescriptions:
 
         metric = Metric()
         # collect Clinic info from Clinics Service API
-        clinic, status = self.clinics_service.get_clinic(id=prescription_info['clinic']['id'])
+        clinic, status = self.clinics_service.get_clinic(clinic_id=prescription_info['clinic']['id'])
         if status:
             logging.info("Prescriptions.create_prescription(): Clinic acquired from Clinics Service API: %s" % clinic.build_json())
             metric.set_clinic(clinic)
@@ -101,7 +101,7 @@ class Prescriptions:
             # rollback
             logging.error("Prescriptions.create_prescription(): error posting Metrics in Metrics Service API!")
             logging.error("Prescriptions.create_prescription(): making rollback in prescription earlier saved")
-            status, removed_prescription = self.database.remove_prescription(registered_prescription.id)
+            status, removed_prescription = self.database.remove_prescription(registered_prescription)
             if status == DatabaseStatus.REMOVE_PRESCRIPTION_ERROR:
                 logging.error("Prescriptions.create_prescription(): cant remove prescription from database")
                 return HttpResponse(json=Errors.DATABASE_ERROR.build_json(), code=Errors.DATABASE_ERROR.http_code)
