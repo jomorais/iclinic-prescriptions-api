@@ -29,6 +29,14 @@ jobs:
     - name: Test with pytest
       run: |
         python -m pytest test/*.py
+
+    - name: Coverage Calc (Coveralls.io)
+      run: |
+        coverage run --source=. -m pytest test/
+        coveralls --service=github
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
   deploy:
     needs: build
