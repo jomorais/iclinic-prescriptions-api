@@ -14,8 +14,7 @@ def home():
     return "iClinic-Python-Challenge - [Prescriptions REST API]"
 
 
-@app.route('/prescriptions')
-@app.route('/prescriptions/', methods=["POST"])
+@app.route('/prescriptions', methods=["POST"])
 def prescriptions():
     response = api.create_prescription(request.json)
     return response.json, response.code
