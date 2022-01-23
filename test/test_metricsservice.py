@@ -1,6 +1,6 @@
 from services.metricsservice import MetricsService
 from model.metric import Metric
-from model.error import Errors, Error
+from model.error import Errors, Error, iClinicErrors
 
 
 def test_metricsservice_set_metrics_success():
@@ -100,6 +100,6 @@ def test_metricsservice_set_metrics_service_not_available():
     response, status = ms.set_metrics(metrics=metrics)
     assert not status
     assert type(response) == Error
-    assert response.message == Errors.METRICS_SERVICE_NOT_AVAILABLE.message
-    assert response.code == Errors.METRICS_SERVICE_NOT_AVAILABLE.code
+    assert response.message == iClinicErrors.METRICS_SERVICE_NOT_AVAILABLE.message
+    assert response.code == iClinicErrors.METRICS_SERVICE_NOT_AVAILABLE.code
 
