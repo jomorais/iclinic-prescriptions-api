@@ -15,6 +15,10 @@ class ErrorCode:
     CODE_INVALID_URL = 11
     CODE_HTTP_STATUS = 12
     CODE_DATABASE_ERROR = 13
+    CODE_INVALID_CLINICS_SERVICE_RESPONSE = 14
+    CODE_INVALID_PATIENTS_SERVICE_RESPONSE = 15
+    CODE_INVALID_PHYSICIANS_SERVICE_RESPONSE = 16
+    CODE_INVALID_METRICS_SERVICE_RESPONSE = 17
 
 
 @dataclass
@@ -36,6 +40,23 @@ class Errors:
     MALFORMED_REQUEST: Error = Error(message="malformed request",
                                      code=ErrorCode.CODE_MALFORMED_REQUEST,
                                      http_code=400)
+    REQUEST_TIMEOUT: Error = Error(message="request timeout",
+                                   code=ErrorCode.CODE_REQUEST_TIMEOUT,
+                                   http_code=408)
+    HTTP_ERROR: Error = Error(message="http error",
+                              code=ErrorCode.CODE_HTTP_ERROR,
+                              http_code=500)
+    INVALID_URL: Error = Error(message="invalid url",
+                               code=ErrorCode.CODE_INVALID_URL,
+                               http_code=400)
+    DATABASE_ERROR: Error = Error(message="database error",
+                                  code=ErrorCode.CODE_DATABASE_ERROR,
+                                  http_code=500)
+    HTTP_STATUS: Error = Error(message="http status")
+
+
+@dataclass
+class iClinicErrors:
     PHYSICIAN_NOT_FOUND: Error = Error(message="physician not found",
                                        code=ErrorCode.CODE_PHYSICIAN_NOT_FOUND,
                                        http_code=404)
@@ -57,15 +78,15 @@ class Errors:
     CLINICS_SERVICE_NOT_AVAILABLE: Error = Error(message="clinics service not available",
                                                  code=ErrorCode.CODE_CLINICS_SERVICE_NOT_AVAILABLE,
                                                  http_code=503)
-    REQUEST_TIMEOUT: Error = Error(message="request timeout",
-                                   code=ErrorCode.CODE_REQUEST_TIMEOUT,
-                                   http_code=408)
-    HTTP_ERROR: Error = Error(message="http error",
-                              code=ErrorCode.CODE_HTTP_ERROR,
-                              http_code=500)
-    INVALID_URL: Error = Error(message="invalid url",
-                               code=ErrorCode.CODE_INVALID_URL,
-                               http_code=400)
-    HTTP_STATUS: Error = Error(message="http status")
-    DATABASE_ERROR: Error = Error(message="database error", code=ErrorCode.CODE_DATABASE_ERROR,
-                                  http_code=500)
+    INVALID_CLINICS_SERVICE_RESPONSE: Error = Error(message="invalid clinics service response",
+                                                    code=ErrorCode.CODE_INVALID_CLINICS_SERVICE_RESPONSE,
+                                                    http_code=500)
+    INVALID_PATIENTS_SERVICE_RESPONSE: Error = Error(message="invalid patients service response",
+                                                     code=ErrorCode.CODE_INVALID_PATIENTS_SERVICE_RESPONSE,
+                                                     http_code=500)
+    INVALID_PHYSICIANS_SERVICE_RESPONSE: Error = Error(message="invalid physicians service response",
+                                                       code=ErrorCode.CODE_INVALID_PHYSICIANS_SERVICE_RESPONSE,
+                                                       http_code=500)
+    INVALID_METRICS_SERVICE_RESPONSE: Error = Error(message="invalid metrics service response",
+                                                    code=ErrorCode.CODE_INVALID_METRICS_SERVICE_RESPONSE,
+                                                    http_code=500)
