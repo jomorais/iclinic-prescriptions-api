@@ -7,10 +7,13 @@ from model.metric import Metric
 from utils.tools import validate_json
 from model.error import Errors
 from database.database import DatabaseStatus
+from model.http import HttpResponse
+import logging
 
 
 class Prescriptions:
     def __init__(self, database):
+        logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
         self.database = database
         self.clinics_service = ClinicsService(host="https://mock-api-challenge.dev.iclinic.com.br",
                                               path="/clinics/", retries=3, timeout=5, cache_ttl=259200,
@@ -25,64 +28,80 @@ class Prescriptions:
                                               path="/metrics/", retries=5, timeout=6, cache_ttl=0,
                                               auth_token="Bearer SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c")
 
-    def build_prescription(self, prescription_info):
+    def create_prescription(self, prescription_info):
         if validate_json(json_object=prescription_info, schema=Prescription.schema) is False:
-            return Errors.MALFORMED_REQUEST.build_json()
-
-        prescription = Prescription()
-        metric = Metric()
+            return HttpResponse(json=Errors.MALFORMED_REQUEST.build_json(), code=400)
 
         # collect Physician info from Physicians Service API
         physician, status = self.physicians_service.get_physician(id=prescription_info['physician']['id'])
         if not status:
-            return physician.build_json(), 400
-        prescription.physician_id = physician.id
-        metric.physician_id = physician.id
-        metric.physician_name = physician.name
-        metric.physician_crm = physician.crm
-        print(physician)
+            logging.error("Prescriptions.create_prescription(): physicians_service.get_physician(): %s" % physician.build_json())
+            return HttpResponse(json=physician.build_json(), code=400)
+        logging.info("Prescriptions.create_prescription(): Physician acquired from Physicians Service API: %s" % physician.build_json())
 
         # collect Patient info from Patients Service API
         patient, status = self.patients_service.get_patient(id=prescription_info['patient']['id'])
         if not status:
-            return patient.build_json(), 400
-        prescription.patient_id = patient.id
-        metric.patient_id = patient.id
-        metric.patient_name = patient.name
-        metric.patient_email = patient.email
-        metric.patient_phone = patient.phone
+            logging.error("Prescriptions.create_prescription(): patients_service.get_patient(): %s" % patient.build_json())
+            return HttpResponse(json=patient.build_json(), code=400)
+        logging.info("Prescriptions.create_prescription(): Patient acquired from Patient Service API: %s" % patient.build_json())
 
-        print(patient)
-
+        metric = Metric()
         # collect Clinic info from Clinics Service API
         clinic, status = self.clinics_service.get_clinic(id=prescription_info['clinic']['id'])
         if status:
-            metric.clinic_id = clinic.id
-            metric.clinic_name = clinic.name
+            logging.info("Prescriptions.create_prescription(): Clinic acquired from Clinics Service API: %s" % clinic.build_json())
+            metric.set_clinic(clinic)
             print(clinic)
-        prescription.clinic_id = prescription_info['clinic']['id']
-        prescription.text = prescription_info['text']
+        else:
+            logging.warning("Prescriptions.create_prescription(): Clinic not found: %s" % clinic.build_json())
+
+        metric.set_physician(physician)
+        metric.set_patient(patient)
+        prescription = Prescription(clinic_id=prescription_info['clinic']['id'],
+                                    patient_id=patient.id,
+                                    physician_id=physician.id,
+                                    text=prescription_info['text'])
+
+        logging.info("Prescriptions.create_prescription(): New Prescription: %s" % prescription.build_json())
+        logging.info("Prescriptions.create_prescription(): saving in database...")
+
         # persist prescription and set metrics to Metrics Service API
         status, registered_prescription = self.database.register_prescription(prescription)
         if status == DatabaseStatus.REGISTER_PRESCRIPTION_ERROR:
-            return Errors.DATABASE_ERROR.build_json(), 400
+            logging.error("Prescriptions.create_prescription(): cant save prescription to database")
+            return HttpResponse(json=Errors.DATABASE_ERROR.build_json(), code=400)
+
+        logging.info("Prescriptions.create_prescription(): SAVED! prescription.id: %s" % registered_prescription.id)
 
         metric.prescription_id = registered_prescription.id
-        print(metric.build_json())
+
+        logging.info("Prescriptions.create_prescription(): New Metric: %s" % metric.build_json())
+        logging.info("Prescriptions.create_prescription(): integrating it in Metrics Service API...")
         metrics, status = self.metrics_service.set_metrics(metrics=metric)
         if not status:
             # rollback
+            logging.error("Prescriptions.create_prescription(): error posting Metrics in Metrics Service API!")
+            logging.error("Prescriptions.create_prescription(): making rollback in prescription earlier saved")
             status, removed_prescription = self.database.remove_prescription(registered_prescription.id)
             if status == DatabaseStatus.REMOVE_PRESCRIPTION_ERROR:
-                return Errors.DATABASE_ERROR.build_json(), 400
-            return metrics.build_json(), 400
+                logging.error("Prescriptions.create_prescription(): cant remove prescription from database")
+                return HttpResponse(json=Errors.DATABASE_ERROR.build_json(), code=400)
+            logging.error("Prescriptions.create_prescription(): rollback is done")
+            return HttpResponse(json=metrics.build_json(), code=400)
 
+        logging.info("Prescriptions.create_prescription(): Metrics are integrated!! Metrics.id: %s" % metrics.id)
+
+        logging.info("Prescriptions.create_prescription(): applying Metrics.id into prescription...")
         # update metric_id in prescription
         registered_prescription.metric_id = metrics.id
-        self.database.update_prescription(registered_prescription)
-        if status == DatabaseStatus.UPDATE_PRESCRIPTION_SUCCESS:
-            return Errors.DATABASE_ERROR.build_json(), 400
+        status, new_prescription = self.database.update_prescription(registered_prescription)
+        if status == DatabaseStatus.UPDATE_PRESCRIPTION_ERROR:
+            logging.info("Prescriptions.create_prescription(): Metrics.id couldn't applied due DATABASE ERROR")
+            return HttpResponse(json=Errors.DATABASE_ERROR.build_json(), code=400)
 
-        return registered_prescription.build_json(), 201
+        logging.info("Prescriptions.create_prescription(): New Prescription are created successfully!!")
+        logging.info("Prescriptions.create_prescription(): New Prescription: %s" % new_prescription.build_json())
+        return HttpResponse(json=new_prescription.build_json(), code=201)
 
 

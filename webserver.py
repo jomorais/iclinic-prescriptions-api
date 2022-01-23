@@ -11,13 +11,14 @@ api = Prescriptions(database=IClinicDatabase())
 
 @app.route('/')
 def home():
-    return "Prescriptions REST API"
+    return "iClinic-Python-Challenge - [Prescriptions REST API]"
 
 
 @app.route('/prescriptions')
 @app.route('/prescriptions/', methods=["POST"])
 def prescriptions():
-    return api.build_prescription(request.json)
+    response = api.create_prescription(request.json)
+    return response.json, response.code
 
 
 app.run(host="0.0.0.0", port=8008)
