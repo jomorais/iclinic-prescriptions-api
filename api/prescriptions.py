@@ -108,7 +108,7 @@ class Prescriptions:
             logging.error("Prescriptions.create_prescription(): rollback is done")
             return HttpResponse(json=metrics.build_json(), code=metrics.http_code)
 
-        logging.info("Prescriptions.create_prescription(): Metrics are integrated!! Metrics.id: %s" % metrics.id)
+        logging.info("Prescriptions.create_prescription(): Metrics are integrated!! Metrics: %s" % metrics.build_json())
 
         logging.info("Prescriptions.create_prescription(): applying Metrics.id into prescription...")
         # update metric_id in prescription
