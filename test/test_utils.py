@@ -1,22 +1,41 @@
 import pytest
-from utils.tools import mandatory_keys_checker
+from utils.tools import validate_json
+from model.prescription import Prescription
 
 
-def test_key_checker():
-    my_dict = {"key_a": "aaa", "key_b": "bbb", "key_c": 0, "key_d": 0.1, "key_e": {}}
+def test_validate_json():
+    def setup():
+        prescription_json = {
+          "clinic": {
+                "id": 1
+          },
+          "physician": {
+            "id": 1
+          },
+          "patient": {
+            "id": 2
+          },
+          "text": "Dipirona 1x ao diaasdasd"
+        }
+        return prescription_json
+    prescription_json = setup()
+    assert validate_json(json_object=prescription_json, schema=Prescription.schema)
 
-    assert mandatory_keys_checker(['key_a', 'key_b', 'key_c', 'key_d', 'key_e'], dict_object=my_dict) is True
 
-    assert mandatory_keys_checker(['key_b', 'key_c', 'key_d', 'key_e'], dict_object=my_dict) is True
-
-    assert mandatory_keys_checker(['key_a'], dict_object=my_dict) is True
-
-    with pytest.raises(Exception):
-        mandatory_keys_checker('key_a', dict_object=my_dict)
-
-    with pytest.raises(Exception):
-        mandatory_keys_checker(['key_a'], dict_object='')
-
-    assert mandatory_keys_checker(['key_a', 'key_b', 'key_c', 'key_d', 'key_e', 'key_f'], dict_object=my_dict) is False
-
-    assert mandatory_keys_checker(['key_b', 'key_c', 'key_d', 'key_e', 'key_f'], dict_object=my_dict) is False
+def test_validate_failed():
+    def setup():
+        prescription_json = {
+          "clinic": {
+                "ids": 1
+          },
+          "physician": {
+            "id": 1
+          },
+          "patient": {
+            "id": 2
+          },
+          "text": "Dipirona 1x ao diaasdasd"
+        }
+        return prescription_json
+    prescription_json = setup()
+    assert validate_json(json_object=prescription_json, schema=Prescription.schema) is False
