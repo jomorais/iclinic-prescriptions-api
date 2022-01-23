@@ -4,7 +4,7 @@ from services.physiciansservice import PhysiciansService
 from services.metricsservice import MetricsService
 from model.prescription import Prescription
 from model.metric import Metric
-from utils.tools import mandatory_keys_checker
+from utils.tools import validate_json
 from model.error import Errors
 from database.database import DatabaseStatus
 
@@ -26,8 +26,7 @@ class Prescriptions:
                                               auth_token="Bearer SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c")
 
     def build_prescription(self, prescription_info):
-        if mandatory_keys_checker(mandatory_keys=['clinic', 'physician', 'patient', 'text'],
-                                  dict_object=prescription_info) is False:
+        if validate_json(json_object=prescription_info, schema=Prescription.schema) is False:
             return Errors.MALFORMED_REQUEST.build_json()
 
         prescription = Prescription()

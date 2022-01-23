@@ -9,6 +9,35 @@ class Prescription:
     patient_id: int = 0
     text: str = ''
     metric_id: str = ''
+    schema = {
+      "id": "prescription",
+      "type": "object",
+      "properties": {
+        "clinic": {
+          "type": "object",
+          "properties": {
+            "id": {"type": "number"}
+          },
+          "required": ["id"]
+        },
+        "physician": {
+          "type": "object",
+          "properties": {
+            "id": {"type": "number"}
+          },
+          "required": ["id"]
+        },
+        "patient": {
+          "type": "object",
+          "properties": {
+            "id": {"type": "number"}
+          },
+          "required": ["id"]
+        },
+        "text": {"type": "string"},
+      },
+      "required": ["clinic", "physician", "patient", "text"]
+    }
 
     def build_json(self):
         return {"data": {"id": self.id,
