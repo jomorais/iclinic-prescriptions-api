@@ -13,10 +13,7 @@ class MetricsService(DependentService):
     def set_metrics(self, metrics):
         service_url = "%s%s" % (self.host, self.path)
         response, status = self.post(url=service_url, content=metrics.build_json())
-        print('set_metrics: metrics %s' % metrics)
-        print('set_metrics: %s' % status)
         if status:
-            print('set_metrics %s' % response)
             if 'clinic_id' in response and 'clinic_name' in response:
                 return Metric(id=response["id"],
                               clinic_id=response["clinic_id"],
