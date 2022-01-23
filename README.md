@@ -2,6 +2,9 @@
 
 Este repositório hospeda a minha implementação do desafio [iclinic-python-challenge](https://github.com/iclinic/iclinic-python-challenge). 
 
+![test status](https://github.com/jomorais/iclinic-prescriptions-api/actions/workflows/build_and_deploy.yml/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/jomorais/iclinic-prescriptions-api/badge.svg?branch=main)](https://coveralls.io/github/jomorais/iclinic-prescriptions-api?branch=main)
+
 ## Objetivo
 
 O desafio consiste em desenvolver um serviço `API REST` que possibilite a criação de prescrições médicas a serem 
