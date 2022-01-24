@@ -5,11 +5,6 @@ from peewee import DatabaseError
 from uuid import uuid4
 
 
-def reset_database():
-    Prescriptions_t.drop_table()
-    Prescriptions_t.create_table()
-
-
 class MockedPrescriptionModelBase:
     def __init__(self, physician_id, patient_id, text, clinic_id=0, metric_id=""):
         self.id = 1
