@@ -43,21 +43,6 @@ class IClinicDatabase:
         except DatabaseError as ex:
             return DatabaseStatus.REGISTER_PRESCRIPTION_ERROR, None
 
-    def select_prescription(self, prescription: Prescription):
-        try:
-            for queried_prescription in self.prescriptions_t.select().where(
-                    self.prescriptions_t.id == prescription.id).iterator():
-                prescription = Prescription(id=queried_prescription.id,
-                                            clinic_id=queried_prescription.clinic_id,
-                                            physician_id=queried_prescription.physician_id,
-                                            patient_id=queried_prescription.patient_id,
-                                            text=queried_prescription.text,
-                                            metric_id=queried_prescription.metric_id)
-                return DatabaseStatus.SELECT_PRESCRIPTION_SUCCESS, prescription
-            return DatabaseStatus.SELECT_PRESCRIPTION_NOT_FOUND, None
-        except DatabaseError as ex:
-            return DatabaseStatus.SELECT_PRESCRIPTION_ERROR, None
-
     def update_prescription(self, prescription: Prescription):
         try:
             query = self.prescriptions_t.update(clinic_id=prescription.clinic_id,
