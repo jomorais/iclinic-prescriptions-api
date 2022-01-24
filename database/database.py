@@ -26,9 +26,6 @@ class IClinicDatabase:
     def init(self):
         if self.prescriptions_t.table_exists() is False:
             self.prescriptions_t.create_table()
-            return True
-        else:
-            return False
 
     def register_prescription(self, prescription: Prescription):
         try:
