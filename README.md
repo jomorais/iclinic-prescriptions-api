@@ -8,11 +8,11 @@ Este repositório hospeda a minha implementação do desafio [iclinic-python-cha
 ## Objetivo
 
 O desafio consiste em desenvolver um serviço `API REST` que possibilite a criação de prescrições médicas a serem 
-armazenadas em uma base de dados integrando estas informações com o `SERVIÇO DE MÉTRICAS`. 
+armazenadas em uma base de dados, integrando estas informações com o `SERVIÇO DE MÉTRICAS`. 
 
 Para detalhes sobre os requisitos da `API REST` veja o repositório: [https://github.com/iclinic/iclinic-python-challenge](https://github.com/iclinic/iclinic-python-challenge).
 
-A `API REST` foi disponibilizada em uma instância na Digital Ocean, e pode ser acessada por nessa URL: `http://167.71.92.76:8008`
+A `API REST` foi disponibilizada em uma instância na Digital Ocean, e pode acessada através da URL: `http://167.71.92.76:8008`
 
 ## Arquitetura
 A aplicação é composta por dois serviços:
@@ -173,6 +173,9 @@ Após o comando acima os containers `db` e `iclinic` já estarão em execução.
 O webserver no container `ìclinic` esta rodando na porta `8008`. 
 
 Para realizar uma requisição `POST` de uma nova prescrição médica vamos utilizar pacote `curl`:
+```shell
+curl -X POST http://<HOST>:8008/prescriptions -H 'Content-Type: application/json' -d '{"clinic": {"id": 1},"physician": {"id": 1},"patient": {"id": 1},"text": "Dipirona 1x ao dia"}'
+```
 
 Onde `<HOST>` é o IP ou DNS do host da aplicação:
 - caso local: usar `localhost`
@@ -228,7 +231,9 @@ df8a5e7174f6   iclinic-prescriptions-api_iclinic   "python3 webserver.py"   4 ho
 3e9c2510a2ac   postgres:14.0                       "docker-entrypoint.s…"   19 hours ago   Up 4 hours   5432/tcp                                    iclinic-prescriptions-api_db_1
 ```
 
-Para visualizar os logs da API execute o comando `docker logs`
+Neste caso o nome do container da `API REST` é `iclinic-prescriptions-api_iclinic_1`
+
+Para visualizar os logs da `API REST` execute o comando `docker logs`
 ```shell
 sudo docker logs -f iclinic-prescriptions-api_iclinic_1
 ```
