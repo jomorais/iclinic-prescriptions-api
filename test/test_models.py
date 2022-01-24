@@ -3,6 +3,7 @@ from model.clinic import Clinic
 from model.physician import Physician
 from model.patient import Patient
 from model.prescription import Prescription
+from model.http import HttpResponse
 
 
 def test_clinic():
@@ -119,4 +120,13 @@ def test_metric():
     assert metric.patient_name == "Gabriel"
     assert metric.patient_email == "gsilva@gmail.com"
     assert metric.patient_phone == "(092) 321654987"
+
+
+def test_http():
+    def setup():
+        return HttpResponse(json={"test": "text", "id": 1}, code=500)
+
+    http_response = setup()
+    assert http_response.json == {"test": "text", "id": 1}
+    assert http_response.code == 500
 
