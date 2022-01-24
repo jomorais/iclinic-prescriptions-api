@@ -24,6 +24,9 @@ Foi criado um container para cada serviço de acordo com o arquivo `docker-compo
 
 Para o `webserver` o container é representado por `iclinic` e para `base de dados` o container é representado por `db`
 
+![arch_iclinic](https://user-images.githubusercontent.com/6545172/150719249-c808c8fc-92e6-4814-bb42-44f30cdf7d38.png)
+
+
 
 `docker-compose.yml`
 ```yaml
@@ -101,6 +104,14 @@ jobs:
     - name: Test with pytest
       run: |
         python -m pytest test/*.py
+
+    - name: Coverage Calc (Coveralls.io)
+      run: |
+        coverage run --source=. -m pytest test/
+        coveralls --service=github
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
   deploy:
     needs: build
@@ -122,11 +133,12 @@ jobs:
             docker-compose build --force-rm --no-cache
             docker-compose up -d
 
-    
-
 ```
 
 A cada `push` ou `pull request` no branch `main` do github, automaticamente o `github-actions` executa o workflow iniciando processo de `build`, caso tenha sucesso na build e tests, é iniciado o processo de `deploy` da aplicação para o droplet na Didital Ocean.
+
+![build_deploy_workflow](https://user-images.githubusercontent.com/6545172/150719743-7c5891c1-d4e9-4182-851a-fba0c28296b5.png)
+
 
 ## Executando a API
 
