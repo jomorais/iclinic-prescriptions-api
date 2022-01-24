@@ -63,3 +63,41 @@ def test_patientsservice_get_patient_service_not_available():
     assert response.message == iClinicErrors.PATIENTS_SERVICE_NOT_AVAILABLE.message
     assert response.code == iClinicErrors.PATIENTS_SERVICE_NOT_AVAILABLE.code
 
+
+def test_patientsservice_get_patient_service_http_status():
+    def setup():
+        class MockedRequester:
+            def get(self, url):
+                return Errors.HTTP_STATUS.build_json(code=203), False
+
+        ps = PatientsService(host="https://mock-api-challenge.dev.iclinic.com.br",
+                             path="/patients/", retries=2, timeout=3, cache_ttl=43200,
+                             auth_token="Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJzZXJ2aWNlIjoicGF0aWVudHMifQ.Pr6Z58GzNRtjX8Y09hEBzl7dluxsGiaxGlfzdaphzVU")
+        ps.requester = MockedRequester()
+        return ps
+    ps = setup()
+    response, status = ps.get_patient(1)
+    assert not status
+    assert type(response) == Error
+    assert response.message == Errors.HTTP_STATUS.message
+    assert response.code == Errors.HTTP_STATUS.code
+
+
+def test_patientsservice_get_patient_sinvalid_patients_service_response():
+    def setup():
+        class MockedRequester:
+            def get(self, url):
+                return {"id": 23, "name": "Joao"}, True
+
+        ps = PatientsService(host="https://mock-api-challenge.dev.iclinic.com.br",
+                             path="/patients/", retries=2, timeout=3, cache_ttl=43200,
+                             auth_token="Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJzZXJ2aWNlIjoicGF0aWVudHMifQ.Pr6Z58GzNRtjX8Y09hEBzl7dluxsGiaxGlfzdaphzVU")
+        ps.requester = MockedRequester()
+        return ps
+    ps = setup()
+    response, status = ps.get_patient(1)
+    assert not status
+    assert type(response) == Error
+    assert response.message == iClinicErrors.INVALID_PATIENTS_SERVICE_RESPONSE.message
+    assert response.code == iClinicErrors.INVALID_PATIENTS_SERVICE_RESPONSE.code
+
