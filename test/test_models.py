@@ -104,3 +104,19 @@ def test_metric():
                                    "physician_name": "Raimundo",
                                    "physician_crm": "123456789",
                                    "prescription_id": 12}
+
+    metric.set_clinic(clinic=Clinic(id=234, name="ProSaude"))
+    assert metric.clinic_id == 234
+    assert metric.clinic_name == "ProSaude"
+
+    metric.set_physician(physician=Physician(id=556, name="Renato Telles", crm="123456789"))
+    assert metric.physician_id == 556
+    assert metric.physician_name == "Renato Telles"
+    assert metric.physician_crm == "123456789"
+
+    metric.set_patient(patient=Patient(id=321, name="Gabriel", email="gsilva@gmail.com", phone="(092) 321654987"))
+    assert metric.patient_id == 321
+    assert metric.patient_name == "Gabriel"
+    assert metric.patient_email == "gsilva@gmail.com"
+    assert metric.patient_phone == "(092) 321654987"
+
