@@ -1,3 +1,59 @@
+schema = {
+    "id": "settings",
+    "type": "object",
+    "properties": {
+        "clinics-service": {
+            "type": "object",
+            "properties": {
+                "host": {"type": "string"},
+                "auth_token": {"type": "string"},
+                "path": {"type": "string"},
+                "retries": {"type": "number"},
+                "timeout": {"type": "number"},
+                "cache_ttl": {"type": "number"},
+            },
+            "required": ["host", "auth_token", "path", "retries", "timeout", "cache_ttl"]
+        },
+        "patients-service": {
+            "type": "object",
+            "properties": {
+                "host": {"type": "string"},
+                "auth_token": {"type": "string"},
+                "path": {"type": "string"},
+                "retries": {"type": "number"},
+                "timeout": {"type": "number"},
+                "cache_ttl": {"type": "number"},
+            },
+            "required": ["host", "auth_token", "path", "retries", "timeout", "cache_ttl"]
+        },
+        "physicians-service": {
+            "type": "object",
+            "properties": {
+                "host": {"type": "string"},
+                "auth_token": {"type": "string"},
+                "path": {"type": "string"},
+                "retries": {"type": "number"},
+                "timeout": {"type": "number"},
+                "cache_ttl": {"type": "number"},
+            },
+            "required": ["host", "auth_token", "path", "retries", "timeout", "cache_ttl"]
+        },
+        "metrics-service": {
+            "type": "object",
+            "properties": {
+                "host": {"type": "string"},
+                "auth_token": {"type": "string"},
+                "path": {"type": "string"},
+                "retries": {"type": "number"},
+                "timeout": {"type": "number"},
+                "cache_ttl": {"type": "number"},
+            },
+            "required": ["host", "auth_token", "path", "retries", "timeout", "cache_ttl"]
+        }
+    },
+    "required": ["clinics-service", "patients-service", "physicians-service", "metrics-service"]
+}
+
 dependent_services_settings = {
     "clinics-service": {
         "host": "https://mock-api-challenge.dev.iclinic.com.br",
