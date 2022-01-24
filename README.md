@@ -204,10 +204,13 @@ Foram mapeados os seguintes erros:
 
 ## Depurando a aplicação
 
-Uma vez os containers em execução
+Para verificar o status de execução dos containers, execute o comando `docker ps`
+
 ```shell
 sudo docker ps
+```
 
+```shell
 CONTAINER ID   IMAGE                               COMMAND                  CREATED        STATUS       PORTS                                       NAMES
 df8a5e7174f6   iclinic-prescriptions-api_iclinic   "python3 webserver.py"   4 hours ago    Up 4 hours   0.0.0.0:8008->8008/tcp, :::8008->8008/tcp   iclinic-prescriptions-api_iclinic_1
 3e9c2510a2ac   postgres:14.0                       "docker-entrypoint.s…"   19 hours ago   Up 4 hours   5432/tcp                                    iclinic-prescriptions-api_db_1
