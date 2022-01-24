@@ -59,3 +59,42 @@ def test_physiciansservice_get_physician_service_not_available():
     assert response.message == iClinicErrors.PHYSICIANS_SERVICE_NOT_AVAILABLE.message
     assert response.code == iClinicErrors.PHYSICIANS_SERVICE_NOT_AVAILABLE.code
 
+
+def test_physiciansservice_get_physician_status_code():
+    def setup():
+        class MockedRequester:
+            def get(self, url):
+                return Errors.HTTP_STATUS.build_json(code=203), False
+
+        ps = PhysiciansService(host="https://mock-api-challenge.dev.iclinic.com.br",
+                               path="/physicians/", retries=3, timeout=5, cache_ttl=259200,
+                               auth_token="Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJzZXJ2aWNlIjoiY2xpbmljcyJ9.r3w8KS4LfkKqZhOUK8YnIdLhVGJEqnReSClLCMBIJRQ")
+        ps.requester = MockedRequester()
+        return ps
+    ps = setup()
+    response, status = ps.get_physician(1)
+    assert not status
+    assert type(response) == Error
+    assert response.message == Errors.HTTP_STATUS.message
+    assert response.code == 203
+
+
+def test_physiciansservice_get_physician_invalid_physician_service_response():
+    def setup():
+        class MockedRequester:
+            def get(self, url):
+                return {"id": "145", "name": "joaci", "crm": 123456789}, True
+
+        ps = PhysiciansService(host="https://mock-api-challenge.dev.iclinic.com.br",
+                               path="/physicians/", retries=3, timeout=5, cache_ttl=259200,
+                               auth_token="Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJzZXJ2aWNlIjoiY2xpbmljcyJ9.r3w8KS4LfkKqZhOUK8YnIdLhVGJEqnReSClLCMBIJRQ")
+        ps.requester = MockedRequester()
+        return ps
+    ps = setup()
+    response, status = ps.get_physician(1)
+    assert not status
+    assert type(response) == Error
+    assert response.message == iClinicErrors.INVALID_PHYSICIANS_SERVICE_RESPONSE.message
+    assert response.code == iClinicErrors.INVALID_PHYSICIANS_SERVICE_RESPONSE.code
+    assert response.http_code == iClinicErrors.INVALID_PHYSICIANS_SERVICE_RESPONSE.http_code
+
